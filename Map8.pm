@@ -15,7 +15,7 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK = qw(NOCHAR MAP8_BINFILE_MAGIC_HI MAP8_BINFILE_MAGIC_LO);
 
-$VERSION = '0.02';  # $Id: Map8.pm,v 1.13 1998/01/19 19:13:31 aas Exp $
+$VERSION = '0.03';  # $Id: Map8.pm,v 1.17 1998/02/13 13:46:12 aas Exp $
 #$DEBUG++;
 
 bootstrap Unicode::Map8 $VERSION;
@@ -65,22 +65,14 @@ sub new
 		    Unicode::Map8::_new_txtfile("$file.txt") ||
 		    Unicode::Map8::_new_binfile("$file")     ||
 		    Unicode::Map8::_new_txtfile("$file");
+	    $self->{'charset'} = $charset if $self;
 	}
     } else {
 	$self = Unicode::Map8::_new();
     }
+    bless $self, $class if $self;
     print "CREATED $self\n" if $DEBUG && $self;
     $self;
-}
-
-sub DESTROY
-{
-    my $self = shift;
-    if ($DEBUG) {
-	print "DESTROY $self\n";
-	$self->fprint(\*STDOUT) if $self->can('fprint');
-    }
-    $self->_free;
 }
 
 sub tou
@@ -88,6 +80,18 @@ sub tou
     require Unicode::String;
     my $self = shift;
     Unicode::String::utf16($self->to16(@_));
+}
+
+sub unmapped_to8
+{
+    my($self, $code) = @_;
+    "";
+}
+
+sub unmapped_to16
+{
+    my($self, $code) = @_;
+    "";
 }
 
 1;

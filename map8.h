@@ -1,4 +1,4 @@
-/* $Id: map8.h,v 1.8 1998/01/16 22:22:50 aas Exp $
+/* $Id: map8.h,v 1.10 1998/02/13 13:44:06 aas Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -16,20 +16,25 @@ typedef unsigned short  U16;
 typedef unsigned char   U8;
 #endif
 
-typedef U16 (*map8_cb)(U16);
+struct map8;
+
+typedef U8*  (*map8_cb8)  (U16, struct map8*, STRLEN*);
+typedef U16* (*map8_cb16) (U8,  struct map8*, STRLEN*);
 
 typedef struct map8
 {
   U16     to_16[256];
-  U16*    to_8 [256]; /* two level table */
+  U16*    to_8 [256]; /* two level table, first level is (char>>8) */
 
   /* default mapping values (to use if mapping is NOCHAR) */
   U16     def_to8;
   U16     def_to16;
 
   /* callback functions (to use if mapping and default is NOCHAR */
-  map8_cb cb_to8;
-  map8_cb cb_to16;
+  map8_cb8  cb_to8;
+  map8_cb16 cb_to16;
+
+  void*   obj;  /* extra info of some kind */
 } Map8;
 
 /* A binary mapping file is a sequence of one or more of these records.
@@ -71,7 +76,7 @@ U8*   map8_recode_8(Map8*, Map8*, U8*, U8*, int, int*);
 
 int   map8_empty_block(Map8*, U8);
 
-#ifdef DEBUGGING
+#ifdef MAP8_DEBUGGING
 #include <stdio.h>
 
 void map8_print(Map8*);
