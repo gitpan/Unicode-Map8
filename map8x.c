@@ -1,4 +1,4 @@
-/* $Id: map8x.c,v 1.5 1999/05/01 11:58:41 gisle Exp $
+/* $Id: map8x.c,v 1.7 2001/12/31 18:42:50 gisle Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -110,6 +110,7 @@ my_fgets(char* buf, int len, PerlIO* f)
 Map8*
 map8_new_txtfile(const char *file)
 {
+  dTHX;
   Map8* m;
   int count = 0;
   PerlIO* f;
@@ -156,11 +157,12 @@ map8_new_txtfile(const char *file)
 Map8*
 map8_new_binfile(const char *file)
 {
+  dTHX;
   Map8* m;
   int count = 0;
   int n;
   int i;
-  FILE* f;
+  PerlIO* f;
   struct map8_filerec pair[256];
 
   f = PerlIO_open(file, "rb");
@@ -172,7 +174,7 @@ map8_new_binfile(const char *file)
       pair[0].u16 != htons(MAP8_BINFILE_MAGIC_LO))
   {
     /* fprintf(stderr, "Bad magic\n"); */
-    fclose(f);
+    PerlIO_close(f);
     return 0;
   }
   
@@ -308,6 +310,7 @@ U8* map8_to_str8(Map8* m, U16* str16, U8* str8, int len, int* rlen)
 
 U8* map8_recode8(Map8* m1, Map8* m2, U8* from, U8* to, int len, int* rlen)
 {
+  dTHX;
   U8* tmp;
   U16 uc;
   U16 u8;  /* need U16 to represent NOCHAR */
@@ -346,7 +349,7 @@ U8* map8_recode8(Map8* m1, Map8* m2, U8* from, U8* to, int len, int* rlen)
       }
       
       if (len > 1 && !didwarn++)
-	PerlIO_printf(stderr, "one-to-many mapping not implemented yet\n");
+	PerlIO_printf(PerlIO_stderr(), "one-to-many mapping not implemented yet\n");
     }
 
     /* Never managed to find a mapping to Unicode, skip it */

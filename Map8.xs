@@ -1,4 +1,4 @@
-/* $Id: Map8.xs,v 1.11 2000/06/13 18:27:04 gisle Exp $
+/* $Id: Map8.xs,v 1.12 2001/12/31 17:51:25 gisle Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -92,7 +92,7 @@ to8_cb(U16 u, Map8* m, STRLEN *len)
  * is also automatically freed when the magic is freed.
  */
 static int
-map8_magic_free(SV* sv, MAGIC* mg)
+map8_magic_free(pTHX_ SV* sv, MAGIC* mg)
 {
     map8_free((Map8*)mg->mg_obj);
     return 1;
