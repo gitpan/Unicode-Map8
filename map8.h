@@ -1,4 +1,4 @@
-/* $Id: map8.h,v 1.10 1998/02/13 13:44:06 aas Exp $
+/* $Id: map8.h,v 1.11 2002/12/28 00:42:09 gisle Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -9,11 +9,20 @@
 
 #ifdef PERL
 #include "EXTERN.h"
+#include "XSUB.h"
 #include "perl.h"
 #else
 typedef unsigned long   U32;
 typedef unsigned short  U16;
 typedef unsigned char   U8;
+#endif
+
+#ifndef pTHX_
+   #define pTHX_
+#endif
+
+#ifndef dTHX
+   #define dTHX extern int errno
 #endif
 
 struct map8;
