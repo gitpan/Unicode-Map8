@@ -1,4 +1,4 @@
-/* $Id: map8x.c,v 1.1 1998/02/13 13:45:49 aas Exp $
+/* $Id: map8x.c,v 1.3 1998/02/19 12:19:36 aas Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -200,6 +200,7 @@ map8_free(Map8* m)
 }
 
 
+#ifndef PERL
 
 U16* map8_to_str16(Map8* m, U8* str8, U16* str16, int len, int* rlen)
 {
@@ -283,12 +284,15 @@ U8* map8_to_str8(Map8* m, U16* str16, U8* str8, int len, int* rlen)
   return str8;
 }
 
+#endif  /* !PERL */
+
 
 U8* map8_recode8(Map8* m1, Map8* m2, U8* from, U8* to, int len, int* rlen)
 {
   U8* tmp;
   U16 uc;
   U16 u8;  /* need U16 to represent NOCHAR */
+  int didwarn = 0;
 
   if (from == 0)
     return 0;
@@ -322,8 +326,8 @@ U8* map8_recode8(Map8* m1, Map8* m2, U8* from, U8* to, int len, int* rlen)
 	goto got_16;
       }
       
-      if (len > 1)
-	fprintf(stderr, "one-to-many mapping not implemented yet\n");
+      if (len > 1 && !didwarn++)
+	PerlIO_printf(stderr, "one-to-many mapping not implemented yet\n");
     }
 
     /* Never managed to find a mapping to Unicode, skip it */
