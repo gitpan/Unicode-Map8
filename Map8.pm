@@ -15,7 +15,7 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK = qw(NOCHAR MAP8_BINFILE_MAGIC_HI MAP8_BINFILE_MAGIC_LO);
 
-$VERSION = '0.01';  # $Id: Map8.pm,v 1.10 1998/01/16 13:37:27 aas Exp $
+$VERSION = '0.02';  # $Id: Map8.pm,v 1.13 1998/01/19 19:13:31 aas Exp $
 #$DEBUG++;
 
 bootstrap Unicode::Map8 $VERSION;
@@ -104,15 +104,18 @@ Unicode::Map8 - Mapping table between 8-bit chars and Unicode
  my $no_map = Unicode::Map8->new("ISO646-NO") || die;
  my $l1_map = Unicode::Map8->new("latin1")    || die;
 
- my $ustr = $no_map->to16("V}re norske tegn b|r {res");
+ my $ustr = $no_map->to16("V}re norske tegn b|r {res\n");
  my $lstr = $l1_map->to8($ustr);
- print "$lstr\n";
+ print $lstr;
+
+ print $no_map->tou("V}re norske tegn b|r {res\n")->utf8
 
 =head1 DESCRIPTION
 
-The Unicode::Map8 class implement efficient mapping tables between
+The I<Unicode::Map8> class implement efficient mapping tables between
 8-bit character sets and 16 bit character sets like Unicode.  The
-16-bit strings is assumed to use network byte order.
+tables are efficient both in terms of space allocated and translation
+speed.  The 16-bit strings is assumed to use network byte order.
 
 The following methods are available:
 
@@ -122,9 +125,9 @@ The following methods are available:
 
 The object constructor creates new instances of the Unicode::Map8
 class.  I takes an optional argument that specify then name of a 8-bit
-character set to initialize from.  The argument can also be a the name
-of a mapping file.  If the charset/file can not be located, then the
-constructor returns I<undef>.
+character set to initialize mappings from.  The argument can also be a
+the name of a mapping file.  If the charset/file can not be located,
+then the constructor returns I<undef>.
 
 If you omit the argument, then an empty mapping table is constructed.
 You must then add mapping pairs to it using the addpair() method
@@ -135,8 +138,9 @@ described below.
 Adds a new mapping pair to the mapping object.  It takes two
 arguments.  The first is the code value in the 8-bit character set and
 the second is the corresponding code value in the 16-bit character
-set.  The same codes can be used multiple times (but not the same
-pair).  The first definition for a code is the one that is used.
+set.  The same codes can be used multiple times (but using the same
+pair has no effect).  The first definition for a code is the one that
+is used.
 
 Consider the following example:
 
@@ -150,21 +154,21 @@ to 0x20.
 
 =item $m->default_to8( $u8 )
 
-Set the code of default character to use when mapping from 16-bit to
+Set the code of the default character to use when mapping from 16-bit to
 8-bit strings.  If there is no mapping pair defined for a character
-then this default is used by to8() and recode8().
+then this default is substituted by to8() and recode8().
 
 =item $m->default_to16( $u16 )
 
-Set the code of default character to use when mapping from 8-bit to
+Set the code of the default character to use when mapping from 8-bit to
 16-bit strings. If there is no mapping pair defined for a character
 then this default is used by to16(), tou() and recode8().
 
 =item $m->nostrict;
 
 All undefined mappings are replaced with the identity mapping.
-Undefined character are normally just zapped when converting between
-character sets.
+Undefined character are normally just removed (or replaced with the
+default if defined) when converting between character sets.
 
 =item $m->to8( $ustr );
 
@@ -184,29 +188,64 @@ UCS2 string.
 =item $m->recode8($m2, $str);
 
 Map the string $str from one 8-bit character set ($m) to another one
-($m2).  Since we know the mappings towards the common 16-bit encoding
-we can use this to convert between any of the 8-bit character sets we
-know about.
+($m2).  Since we assume we know the mappings towards the common 16-bit
+encoding we can use this to convert between any of the 8-bit character
+sets.
 
 =item $m->to_char16( $u8 )
 
-Maps an 8-bit character code to an 16-bit code.
+Maps a single 8-bit character code to an 16-bit code.  If the 8-bit
+character is unmapped then the constant NOCHAR is returned.
 
 =item $m->to_char8( $u16 )
 
-Maps a 16-bit character code to an 8-bit code.
-
-=item $m->fprint( FILE );
-
-If the extension is compiled with the -DDEBUGGING option, then this
-method is available.  It prints a summary of the content of the
-mapping table on the specified file handle.
+Maps a single 16-bit character code to an 8-bit code. If the 16-bit
+character is unmapped then the constant NOCHAR is returned.
 
 =back
+
+=head1 FILES
+
+The I<Unicode::Map8> constructor can parse two different file formats;
+a binary format and a textual format.
+
+The binary format is simple.  It consist of a sequence of 16-bit
+integer pairs in network byte order.  The first pair should contain
+the magic value 0xFFFE, 0x0001.  Of each pair, the first value is the
+code of an 8-bit character and the second is the code of the 16-bit
+character.  If follows from this that the first value should be less
+than 256.
+
+The textual format consist of lines that is either a comment (first
+non-blank character is '#'), a completely blank line or a line with
+two hexadecimal numbers.  The hexadecimal numbers must be preceded by
+"0x" as in C and Perl.  This is the same format used by the Unicode
+mapping files available from <URL:ftp://ftp.unicode.org/Public>.
+
+The mapping table files are installed in the F<Unicode/Map8/maps>
+directory somewhere in the Perl @INC path.  The variable
+$Unicode::Map8::MAPS_DIR is the complete path name to this directory.
+Binary mapping files are stored within this directory with the suffix
+I<.bin>.  Textual mapping files are stored with the suffix I<.txt>.
+
+The scripts I<map8_bin2txt> and I<map8_txt2bin> can translate between
+these mapping file formats.
+
+A special file called F<aliases> within $MAPS_DIR specify all the
+alias names that can be used to denote the various character sets.
+The first name of each line is the real file name and the rest is
+alias names separated by space.
+
+The `C<umap --list>' command be used to list the character sets
+supported.
 
 =head1 BUGS
 
 Does not handle Unicode surrogate pairs as a single character.
+
+=head1 SEE ALSO
+
+L<umap(1)>
 
 =head1 COPYRIGHT
 
