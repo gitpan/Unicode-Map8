@@ -15,7 +15,7 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK = qw(NOCHAR MAP8_BINFILE_MAGIC_HI MAP8_BINFILE_MAGIC_LO);
 
-$VERSION = '0.04';  # $Id: Map8.pm,v 1.18 1998/02/19 12:46:46 aas Exp $
+$VERSION = '0.05';  # $Id: Map8.pm,v 1.19 1998/07/14 11:13:35 aas Exp $
 #$DEBUG++;
 
 bootstrap Unicode::Map8 $VERSION;
