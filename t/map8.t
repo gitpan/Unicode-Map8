@@ -94,7 +94,7 @@ FF FFFF
 EOT
 close(T);
 
-$m = Unicode::Map8->new("map-$$.txt");
+$m = Unicode::Map8->new("./map-$$.txt");
 unlink("map-$$.txt");
 
 if ($m) {

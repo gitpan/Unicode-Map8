@@ -1,45 +1,3 @@
-Tuesday, May 04, 1999
-
-This is the Unicode::Map8 module with shared libraries compiled for 
-MacPerl.  Shared libraries run only on PPC and CFM68K versions, not 
-non-CFM 68K versions.
-
-This distribution was manually prepared. The two shared libraries are
-MacBinary-encoded, and all other files are Unix text. You will need lots
-of RAM to use 'untarzipme' and 'installme' with this distribution - I have
-no idea how much, but 40 MB or more for sure. If, as seems likely, you're 
-going to use Stuffit Expander, remember to deMacBinarize the shared 
-libraries, and convert the Map8.pm file and utilities to Mac EOLs.
-
-Installation.  It's best to install the files in ':blib:lib' into your 
-'site_perl' folder; that, after all, is what it is meant for -
-
-    {MACPERL}site_perl:Unicode:Map8.pm
-    {MACPERL}site_perl:MacPPC:auto:Unicode:Map8:Map8
-    {MACPERL}site_perl:MacCFM68K:auto:Unicode:Map8:Map8
-    {MACPERL}site_perl:Unicode:Map8:maps:*
-
-Special installation notes. Also transfer the utilities 'diff_iso',
-'make_rfc1345_maps', 'make_unicd_maps', 'map8_bin2txt', 'map8_txt2bin' and
-'umap' to a folder where you store Perl scripts.
-
-Also read the original README file for this distribution, included below.
-
-For technical notes, please see 'README.Mac', if present.  Any files which
-have been edited for porting purposes have the originals placed into a
-folder containing the word "Original".
-
-Testing.  The 't' files have been tested using both the MacPerl application 
-and the MPW perl tool.  When testing before installation, use the -I switch 
-(perl tool in MPW) or Edit>Preferences (MacPerl app) to add ':blib:lib' to 
-your path, and make sure it precedes all others.
-
-*****
-
-Arved Sandstrom          mailto:Arved_37@chebucto.ns.ca
-
-*****
-
 Unicode::Map8
 -------------
 
@@ -57,6 +15,7 @@ This means that the interface to this class might change.
 
 Since UTF8 support is comming to Perl soon, there might be good
 reasons to move this module in the direction of mapping to/from UTF8.
+>>TODO
 
 
 EXAMPLE OF USE
@@ -259,6 +218,8 @@ package.
    greek7-old iso-ir-18
    hp-roman8 r8 roman8
    iso-ir-90
+   koi8-r
+   koi8-u
    latin-greek iso-ir-19
    latin-lap iso-ir-158 lap
    latin6 iso-ir-157 l6

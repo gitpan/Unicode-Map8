@@ -7,23 +7,24 @@ if ($@) {
 
 print "1..2\n";
 
-package My;
-use Unicode::Map8;
-@ISA=qw(Unicode::Map8);
-
-sub unmapped_to16
 {
-my($self, $code) = @_;
-"ABCD";
-}
+    package My;
+    use Unicode::Map8;
+    @ISA=qw(Unicode::Map8);
 
-sub unmapped_to8
-{
-my($self, $code) = @_;
-"<" . Unicode::CharName::uname($code) . ">";
-}
+    sub unmapped_to16
+    {
+	my($self, $code) = @_;
+	"ABCD";
+    }
 
-package main;
+    sub unmapped_to8
+    {
+	my($self, $code) = @_;
+	"<" . Unicode::CharName::uname($code) . ">";
+    }
+
+}
 
 $m = My->new("no");
 

@@ -15,7 +15,7 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK = qw(NOCHAR MAP8_BINFILE_MAGIC_HI MAP8_BINFILE_MAGIC_LO);
 
-$VERSION = '0.06';  # $Id: Map8.pm,v 1.20 1999/05/01 10:49:42 gisle Exp $
+$VERSION = '0.07';  # $Id: Map8.pm,v 1.21 1999/06/02 18:34:40 gisle Exp $
 #$DEBUG++;
 
 bootstrap Unicode::Map8 $VERSION;
@@ -25,11 +25,11 @@ bootstrap Unicode::Map8 $VERSION;
 
 # Try to locate the maps directory, and read the aliases file
 for (split(':', $ENV{MAPS_PATH} || ""),
-     (map "$_"."Unicode:Map8:maps", @INC),
-     ""
+     (map "$_/Unicode/Map8/maps", @INC),
+     "."
     )
 {
-    if (open(ALIASES, "$_:aliases")) {
+    if (open(ALIASES, "$_/aliases")) {
 	$MAPS_DIR = $_;
 	local($_);
 	while (<ALIASES>) {
@@ -46,29 +46,29 @@ for (split(':', $ENV{MAPS_PATH} || ""),
 	last;
     }
 }
-$MAPS_DIR ||= ":";
+$MAPS_DIR ||= ".";
 
 sub new
 {
     my $class = shift;
     my $self;
     if (@_) {
-		my $file = shift;
-		if ($file =~ /\.bin$/) {
-			$self = Unicode::Map8::_new_binfile($file);
-		} elsif ($file =~ /\.txt$/) {
-			$self = Unicode::Map8::_new_txtfile($file);
-		} else {
-			my $charset = $ALIASES{$file} || $file;
-			$file = "$MAPS_DIR:$charset";
-			$self = Unicode::Map8::_new_binfile("$file.bin") ||
-				Unicode::Map8::_new_txtfile("$file.txt") ||
-				Unicode::Map8::_new_binfile("$file")     ||
-				Unicode::Map8::_new_txtfile("$file");
-			$self->{'charset'} = $charset if $self;
-		}
+	my $file = shift;
+	if ($file =~ /\.bin$/) {
+	    $self = Unicode::Map8::_new_binfile($file);
+	} elsif ($file =~ /\.txt$/) {
+	    $self = Unicode::Map8::_new_txtfile($file);
+	} else {
+	    my $charset = $ALIASES{$file} || $file;
+	    $file = "$MAPS_DIR/$charset";
+	    $self = Unicode::Map8::_new_binfile("$file.bin") ||
+		    Unicode::Map8::_new_txtfile("$file.txt") ||
+		    Unicode::Map8::_new_binfile("$file")     ||
+		    Unicode::Map8::_new_txtfile("$file");
+	    $self->{'charset'} = $charset if $self;
+	}
     } else {
-		$self = Unicode::Map8::_new();
+	$self = Unicode::Map8::_new();
     }
     bless $self, $class if $self;
     print "CREATED $self\n" if $DEBUG && $self;
