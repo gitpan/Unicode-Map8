@@ -1,4 +1,4 @@
-/* $Id: Map8.xs,v 1.10 1998/02/19 12:11:27 aas Exp $
+/* $Id: Map8.xs,v 1.11 2000/06/13 18:27:04 gisle Exp $
  *
  * Copyright 1998, Gisle Aas.
  *
@@ -15,6 +15,11 @@ extern "C" {
 #include "XSUB.h"
 #ifdef __cplusplus
 }
+#endif
+
+#include "patchlevel.h"
+#if PATCHLEVEL <= 4 && !defined(PL_dowarn)
+   #define PL_dowarn dowarn
 #endif
 
 #include "map8.h"
@@ -195,7 +200,7 @@ _empty_block(map, block)
 	CODE:
 	    if (block > 0xFF)
 		croak("Only 256 blocks exists");
-	    RETVAL = map8_empty_block(map, block) ? &sv_yes : &sv_no;
+	    RETVAL = boolSV(map8_empty_block(map, block));
 	OUTPUT:
 	    RETVAL
 
@@ -224,7 +229,7 @@ to8(map, str16)
 	INPUT:
 	    U16* str16 = (U16*)SvPV(ST(1), len);
 	CODE:
-	    if (dowarn && (len % 2) != 0)
+	    if (PL_dowarn && (len % 2) != 0)
 		warn("Uneven length of wide string");
 	    len /= 2;
             origlen = len;
