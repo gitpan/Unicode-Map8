@@ -1,5 +1,4 @@
-/* $Id: map8.h,v 1.11 2002/12/28 00:42:09 gisle Exp $
- *
+/*
  * Copyright 1998, Gisle Aas.
  *
  * This library is free software; you can redistribute it and/or
@@ -9,8 +8,8 @@
 
 #ifdef PERL
 #include "EXTERN.h"
-#include "XSUB.h"
 #include "perl.h"
+#include "XSUB.h"
 #else
 typedef unsigned long   U32;
 typedef unsigned short  U16;

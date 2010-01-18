@@ -1,5 +1,4 @@
-/* $Id: Map8.xs,v 1.12 2001/12/31 17:51:25 gisle Exp $
- *
+/*
  * Copyright 1998, Gisle Aas.
  *
  * This library is free software; you can redistribute it and/or

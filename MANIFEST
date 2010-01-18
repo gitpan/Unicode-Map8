@@ -199,3 +199,4 @@ t/map8.t
 t/unistr.t
 typemap
 umap
+META.yml                                 Module meta-data (added by MakeMaker)

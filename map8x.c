@@ -1,5 +1,4 @@
-/* $Id: map8x.c,v 1.7 2001/12/31 18:42:50 gisle Exp $
- *
+/*
  * Copyright 1998, Gisle Aas.
  *
  * This library is free software; you can redistribute it and/or
